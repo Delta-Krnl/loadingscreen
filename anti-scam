@@ -1,0 +1,528 @@
+-- LocalScript (place in StarterPlayer > StarterPlayerScripts)
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AntiScamTradeGui"
+screenGui.Parent = playerGui
+
+-- Loading Screen (same size as main menu)
+local loadingFrame = Instance.new("Frame")
+loadingFrame.Name = "LoadingFrame"
+loadingFrame.Size = UDim2.new(0, 250, 0, 320)
+loadingFrame.Position = UDim2.new(0.5, -125, 0.5, -160)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+loadingFrame.BorderSizePixel = 0
+loadingFrame.Parent = screenGui
+
+-- Add rounded corners to loading frame
+local loadingCorner = Instance.new("UICorner")
+loadingCorner.CornerRadius = UDim.new(0, 10)
+loadingCorner.Parent = loadingFrame
+
+-- Loading Title
+local loadingTitle = Instance.new("TextLabel")
+loadingTitle.Name = "LoadingTitle"
+loadingTitle.Size = UDim2.new(0.9, 0, 0, 40)
+loadingTitle.Position = UDim2.new(0.05, 0, 0, 20)
+loadingTitle.BackgroundTransparency = 1
+loadingTitle.Text = "Anti Scam Trade"
+loadingTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
+loadingTitle.TextScaled = true
+loadingTitle.Font = Enum.Font.SourceSansBold
+loadingTitle.Parent = loadingFrame
+
+-- Loading Message
+local loadingMessage = Instance.new("TextLabel")
+loadingMessage.Name = "LoadingMessage"
+loadingMessage.Size = UDim2.new(0.9, 0, 0, 60)
+loadingMessage.Position = UDim2.new(0.05, 0, 0, 70)
+loadingMessage.BackgroundTransparency = 1
+loadingMessage.Text = "Please wait till the menu reach 100% it will automatically loaded"
+loadingMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingMessage.TextScaled = true
+loadingMessage.Font = Enum.Font.SourceSans
+loadingMessage.Parent = loadingFrame
+
+-- Loading Bar Background
+local loadingBarBg = Instance.new("Frame")
+loadingBarBg.Name = "LoadingBarBg"
+loadingBarBg.Size = UDim2.new(0.8, 0, 0, 20)
+loadingBarBg.Position = UDim2.new(0.1, 0, 0, 160)
+loadingBarBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+loadingBarBg.BorderSizePixel = 0
+loadingBarBg.Parent = loadingFrame
+
+-- Loading Bar Background Corners
+local loadingBarBgCorner = Instance.new("UICorner")
+loadingBarBgCorner.CornerRadius = UDim.new(0, 10)
+loadingBarBgCorner.Parent = loadingBarBg
+
+-- Loading Bar Fill
+local loadingBarFill = Instance.new("Frame")
+loadingBarFill.Name = "LoadingBarFill"
+loadingBarFill.Size = UDim2.new(0, 0, 1, 0)
+loadingBarFill.Position = UDim2.new(0, 0, 0, 0)
+loadingBarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+loadingBarFill.BorderSizePixel = 0
+loadingBarFill.Parent = loadingBarBg
+
+-- Loading Bar Fill Corners
+local loadingBarFillCorner = Instance.new("UICorner")
+loadingBarFillCorner.CornerRadius = UDim.new(0, 10)
+loadingBarFillCorner.Parent = loadingBarFill
+
+-- Loading Percentage
+local loadingPercentage = Instance.new("TextLabel")
+loadingPercentage.Name = "LoadingPercentage"
+loadingPercentage.Size = UDim2.new(0.6, 0, 0, 30)
+loadingPercentage.Position = UDim2.new(0.2, 0, 0, 200)
+loadingPercentage.BackgroundTransparency = 1
+loadingPercentage.Text = "0%"
+loadingPercentage.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingPercentage.TextScaled = true
+loadingPercentage.Font = Enum.Font.SourceSansBold
+loadingPercentage.Parent = loadingFrame
+
+-- Loading Credits
+local loadingCredits = Instance.new("TextLabel")
+loadingCredits.Name = "LoadingCredits"
+loadingCredits.Size = UDim2.new(0.9, 0, 0, 20)
+loadingCredits.Position = UDim2.new(0.05, 0, 0, 280)
+loadingCredits.BackgroundTransparency = 1
+loadingCredits.Text = "Credits by: SpongeBob"
+loadingCredits.TextColor3 = Color3.fromRGB(150, 150, 150)
+loadingCredits.TextScaled = true
+loadingCredits.Font = Enum.Font.SourceSansItalic
+loadingCredits.Parent = loadingFrame
+
+-- Main Frame (smaller size) - Initially hidden
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 250, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -125, 0.5, -160)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.Parent = screenGui
+
+-- Add rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = mainFrame
+
+-- Title Bar Frame
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(200, 200, 0)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+-- Add rounded corners to title bar
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 10)
+titleCorner.Parent = titleBar
+
+-- Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Size = UDim2.new(0.8, 0, 1, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Anti Scam Trade"
+titleLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+titleLabel.TextScaled = true
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Parent = titleBar
+
+-- Close/Open Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ToggleButton"
+toggleButton.Size = UDim2.new(0, 25, 0, 25)
+toggleButton.Position = UDim2.new(1, -30, 0, 5)
+toggleButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+toggleButton.BorderSizePixel = 0
+toggleButton.Text = "X"
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.TextScaled = true
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.Parent = titleBar
+
+-- Add rounded corners to toggle button
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 5)
+toggleCorner.Parent = toggleButton
+
+-- Content Frame
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "ContentFrame"
+contentFrame.Size = UDim2.new(1, 0, 1, -35)
+contentFrame.Position = UDim2.new(0, 0, 0, 35)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainFrame
+
+-- Username Input Box
+local usernameBox = Instance.new("TextBox")
+usernameBox.Name = "UsernameBox"
+usernameBox.Size = UDim2.new(0.9, 0, 0, 30)
+usernameBox.Position = UDim2.new(0.05, 0, 0, 15)
+usernameBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+usernameBox.BorderSizePixel = 0
+usernameBox.PlaceholderText = "Enter Roblox Username..."
+usernameBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+usernameBox.Text = ""
+usernameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+usernameBox.TextScaled = true
+usernameBox.Font = Enum.Font.SourceSans
+usernameBox.Parent = contentFrame
+
+-- Add rounded corners to text box
+local boxCorner = Instance.new("UICorner")
+boxCorner.CornerRadius = UDim.new(0, 5)
+boxCorner.Parent = usernameBox
+
+-- Avatar Display Frame
+local avatarFrame = Instance.new("Frame")
+avatarFrame.Name = "AvatarFrame"
+avatarFrame.Size = UDim2.new(0.8, 0, 0, 120)
+avatarFrame.Position = UDim2.new(0.1, 0, 0, 55)
+avatarFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+avatarFrame.BorderSizePixel = 0
+avatarFrame.Parent = contentFrame
+
+-- Add rounded corners to avatar frame
+local avatarCorner = Instance.new("UICorner")
+avatarCorner.CornerRadius = UDim.new(0, 8)
+avatarCorner.Parent = avatarFrame
+
+-- Avatar Image Label
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Name = "AvatarImage"
+avatarImage.Size = UDim2.new(0.9, 0, 0.9, 0)
+avatarImage.Position = UDim2.new(0.05, 0, 0.05, 0)
+avatarImage.BackgroundTransparency = 1
+avatarImage.Image = ""
+avatarImage.Parent = avatarFrame
+
+-- Add rounded corners to avatar image
+local imageCorner = Instance.new("UICorner")
+imageCorner.CornerRadius = UDim.new(0, 5)
+imageCorner.Parent = avatarImage
+
+-- Teleport Button
+local teleportButton = Instance.new("TextButton")
+teleportButton.Name = "TeleportButton"
+teleportButton.Size = UDim2.new(0.8, 0, 0, 35)
+teleportButton.Position = UDim2.new(0.1, 0, 0, 185)
+teleportButton.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+teleportButton.BorderSizePixel = 0
+teleportButton.Text = "Teleport to Me"
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.TextScaled = true
+teleportButton.Font = Enum.Font.SourceSansBold
+teleportButton.Parent = contentFrame
+
+-- Add rounded corners to button
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = teleportButton
+
+-- Status Label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Name = "StatusLabel"
+statusLabel.Size = UDim2.new(0.9, 0, 0, 15)
+statusLabel.Position = UDim2.new(0.05, 0, 0, 230)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Enter username to see avatar"
+statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+statusLabel.TextScaled = true
+statusLabel.Font = Enum.Font.SourceSans
+statusLabel.Parent = contentFrame
+
+-- Credits Label
+local creditsLabel = Instance.new("TextLabel")
+creditsLabel.Name = "CreditsLabel"
+creditsLabel.Size = UDim2.new(0.9, 0, 0, 15)
+creditsLabel.Position = UDim2.new(0.05, 0, 0, 250)
+creditsLabel.BackgroundTransparency = 1
+creditsLabel.Text = "Credits by: SpongeBob"
+creditsLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+creditsLabel.TextScaled = true
+creditsLabel.Font = Enum.Font.SourceSansItalic
+creditsLabel.Parent = contentFrame
+
+-- Variables
+local currentTargetPlayer = nil
+local isMinimized = false
+local loadingProgress = 0
+
+-- Loading Animation (3 minutes = 180 seconds)
+local function startLoading()
+    local loadingStartTime = tick()
+    local loadingDuration = 180 -- 3 minutes in seconds
+    
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        local elapsedTime = tick() - loadingStartTime
+        loadingProgress = (elapsedTime / loadingDuration) * 100
+        
+        if loadingProgress > 100 then
+            loadingProgress = 100
+        end
+        
+        -- Update loading bar
+        loadingBarFill.Size = UDim2.new(loadingProgress / 100, 0, 1, 0)
+        loadingPercentage.Text = math.floor(loadingProgress) .. "%"
+        
+        -- Change loading bar color as it progresses
+        if loadingProgress < 50 then
+            loadingBarFill.BackgroundColor3 = Color3.fromRGB(255, 255, 0) -- Yellow
+        elseif loadingProgress < 80 then
+            loadingBarFill.BackgroundColor3 = Color3.fromRGB(255, 165, 0) -- Orange
+        else
+            loadingBarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green
+        end
+        
+        -- When loading is complete
+        if loadingProgress >= 100 then
+            connection:Disconnect()
+            wait(1) -- Wait 1 second before showing the main menu
+            
+            -- Fade out loading screen
+            local fadeInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            local fadeTween = TweenService:Create(loadingFrame, fadeInfo, {BackgroundTransparency = 1})
+            
+            -- Fade out all loading elements
+            local fadeElements = {loadingTitle, loadingMessage, loadingBarBg, loadingBarFill, loadingPercentage, loadingCredits}
+            for _, element in pairs(fadeElements) do
+                if element.ClassName == "TextLabel" then
+                    TweenService:Create(element, fadeInfo, {TextTransparency = 1}):Play()
+                else
+                    TweenService:Create(element, fadeInfo, {BackgroundTransparency = 1}):Play()
+                end
+            end
+            
+            fadeTween:Play()
+            fadeTween.Completed:Connect(function()
+                loadingFrame:Destroy()
+                mainFrame.Visible = true
+                
+                -- Animate main frame entrance
+                mainFrame.Size = UDim2.new(0, 0, 0, 0)
+                local entranceInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+                local entranceTween = TweenService:Create(mainFrame, entranceInfo, {Size = UDim2.new(0, 250, 0, 320)})
+                entranceTween:Play()
+            end)
+        end
+    end)
+end
+
+-- Function to update avatar display
+local function updateAvatar(username)
+    if username and username ~= "" then
+        local success, userId = pcall(function()
+            return Players:GetUserIdFromNameAsync(username)
+        end)
+        
+        if success and userId then
+            local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
+            avatarImage.Image = avatarUrl
+            statusLabel.Text = "Avatar loaded: " .. username
+            statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+            
+            -- Find the player in the game
+            currentTargetPlayer = Players:FindFirstChild(username)
+            if currentTargetPlayer then
+                teleportButton.Text = "Teleport " .. username .. " to Me"
+                teleportButton.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+            else
+                teleportButton.Text = "Player not in game"
+                teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            end
+        else
+            avatarImage.Image = ""
+            statusLabel.Text = "User not found"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            teleportButton.Text = "Teleport to Me"
+            teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            currentTargetPlayer = nil
+        end
+    else
+        avatarImage.Image = ""
+        statusLabel.Text = "Enter username to see avatar"
+        statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        teleportButton.Text = "Teleport to Me"
+        teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        currentTargetPlayer = nil
+    end
+end
+
+-- Function to animate button press
+local function animateButton(button)
+    local originalSize = button.Size
+    local pressedSize = UDim2.new(originalSize.X.Scale * 0.95, originalSize.X.Offset, originalSize.Y.Scale * 0.95, originalSize.Y.Offset)
+    
+    local pressInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local pressDownTween = TweenService:Create(button, pressInfo, {Size = pressedSize})
+    local pressUpTween = TweenService:Create(button, pressInfo, {Size = originalSize})
+    
+    pressDownTween:Play()
+    pressDownTween.Completed:Connect(function()
+        pressUpTween:Play()
+    end)
+end
+
+-- Function to teleport player TO YOU
+local function teleportPlayer()
+    if currentTargetPlayer and currentTargetPlayer.Character and currentTargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            -- Visual teleport effect - teleport target player to your location
+            statusLabel.Text = "Teleporting " .. currentTargetPlayer.Name .. " to you..."
+            statusLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+            
+            -- Note: In a real script, you would need RemoteEvents to handle server-side teleportation
+            -- This teleports the TARGET PLAYER to YOUR location
+            local myPosition = player.Character.HumanoidRootPart.Position
+            currentTargetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(myPosition + Vector3.new(5, 0, 0))
+            
+            wait(1)
+            statusLabel.Text = currentTargetPlayer.Name .. " teleported to you!"
+            statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        else
+            statusLabel.Text = "Your character not found"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        end
+    else
+        statusLabel.Text = "Target player not available"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end
+
+-- Function to toggle minimize/maximize
+local function toggleMinimize()
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    
+    if isMinimized then
+        -- Maximize
+        local maximizeTween = TweenService:Create(mainFrame, tweenInfo, {Size = UDim2.new(0, 250, 0, 320)})
+        maximizeTween:Play()
+        contentFrame.Visible = true
+        toggleButton.Text = "X"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+        isMinimized = false
+    else
+        -- Minimize
+        local minimizeTween = TweenService:Create(mainFrame, tweenInfo, {Size = UDim2.new(0, 250, 0, 35)})
+        minimizeTween:Play()
+        contentFrame.Visible = false
+        toggleButton.Text = "+"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(100, 255, 100)
+        isMinimized = true
+    end
+end
+
+-- Enhanced dragging system that works on both PC and Mobile
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+local function updateDrag(input)
+    if dragging and startPos then
+        local delta = input.Position - dragStart
+        local newPosition = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+        mainFrame.Position = newPosition
+    end
+end
+
+local function startDrag(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end
+
+local function stopDrag(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+        dragStart = nil
+        startPos = nil
+    end
+end
+
+-- Connect dragging events to UserInputService for better mobile support
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    
+    -- Check if input is over the main frame
+    local mousePos = input.Position
+    local framePos = mainFrame.AbsolutePosition
+    local frameSize = mainFrame.AbsoluteSize
+    
+    if mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
+       mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y then
+        startDrag(input)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    stopDrag(input)
+end)
+
+-- Also add touch support directly to the frame for better mobile experience
+mainFrame.InputBegan:Connect(startDrag)
+mainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input)
+    end
+end)
+mainFrame.InputEnded:Connect(stopDrag)
+
+-- Event connections
+usernameBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        updateAvatar(usernameBox.Text)
+    end
+end)
+
+usernameBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if usernameBox.Text == "" then
+        updateAvatar("")
+    end
+end)
+
+teleportButton.MouseButton1Click:Connect(function()
+    animateButton(teleportButton)
+    teleportPlayer()
+end)
+
+toggleButton.MouseButton1Click:Connect(function()
+    animateButton(toggleButton)
+    toggleMinimize()
+end)
+
+-- Initial setup
+updateAvatar("")
+
+-- Start loading animation
+startLoading()
